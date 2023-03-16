@@ -1,0 +1,24 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Jim Smith",
+    "number": "1234512345"
+}
+
+### fail due to not having a name
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "number": "1234512345"
+}
+
+### fail due to not having a number
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Jim Smith"
+}
+

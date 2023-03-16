@@ -27,6 +27,9 @@ let persons = [
 const express = require('express')
 
 const app = express()
+
+app.use(express.json())
+
 const PORT = 3001
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
@@ -41,6 +44,33 @@ app.get('/info', (request, response) => {
 
 app.get('/api/persons', (request, response) => {
     response.json(persons)
+})
+
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+
+    if (!body.name || !body.number) {
+        response.status(400).json({
+            error: 'Request body must contain name and number'
+        })
+        return
+    }
+
+    if (persons.find(person => person.name === body.name)) {
+        response.status(400).json({
+            error: `Person with name ${body.name} already exists`
+        })
+        return
+    }
+
+    const newPerson = {
+        name: body.name,
+        number: body.number,
+        id: generatePersonID()
+    }
+    persons = persons.concat(newPerson)
+
+    response.json(newPerson)
 })
 
 app.get('/api/persons/:id', (request, response) => {
@@ -62,3 +92,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
     response.status(204).end()
 })
+
+//helper functions
+
+const generatePersonID = () => Math.floor(Math.random() * 10000)
