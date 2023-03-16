@@ -30,7 +30,20 @@ const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(morgan((tokens, req, res) => {
+    const returnTokens = [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms'
+    ]
+    if (tokens.method(req, res) == 'POST') {
+        returnTokens.push('- ' + JSON.stringify(req.body))
+    }
+    
+    return returnTokens.join(' ')
+}))
 
 const PORT = 3001
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
