@@ -37,11 +37,15 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 //routes
 
-app.get('/info', (request, response) => {
-    response.send(`
-        <p>Phonebook has info for ${persons.length} people</p>
-        <p>${new Date()}</p>
-    `)
+app.get('/info', (request, response, next) => {
+    Person.count()
+        .then(count => {
+            response.send(`
+                <p>Phonebook has info for ${count} people</p>
+                <p>${new Date()}</p>
+            `)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/persons', (request, response, next) => {
